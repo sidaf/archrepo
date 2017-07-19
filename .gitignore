@@ -1,6 +1,5 @@
 src/
 pkg/
-PKGBUILD
 *.pyc
 .*.swp
 *~
