@@ -1,13 +1,17 @@
 pkgname=archrepo-git
-pkgver=$(git log --pretty=format:''|wc -l)
-#pkgver=$(date +%Y.%m.%d)
+pkgver=1.0
 pkgrel=1
-pkgdesc='Seblu Archlinux Repositories Stuff'
+pkgdesc='Archlinux Personal Repository Tools'
 arch=('any')
 url='https://github.com/sidaf/archrepo'
 license=('GPL2')
 makedepends=('git')
 depends=('bash' 'devtools' 'hardlink')
+
+pkgver() {
+  cd "$startdir"
+  echo $(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+}
 
 package() {
   cd "$startdir"

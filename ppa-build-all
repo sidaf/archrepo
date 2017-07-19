@@ -17,6 +17,74 @@ set -o errexit -o nounset -o pipefail
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
+if [[ -t 0 && -t 2 ]]; then
+  RED=$'\e''[1;31m'
+  GREEN=$'\e''[1;32m'
+  BLUE=$'\e''[1;34m'
+  BOLD=$'\e''[0;1m'
+  RESET=$'\e''[m'
+fi
+
+msg() {
+  printf "$GREEN==>$BOLD $1$RESET\n" "${@:1}"
+}
+
+msg2() {
+  printf "$BLUE==>$BOLD $1$RESET\n" "${@:1}"
+}
+
+msg3() {
+  printf "$RED==>$BOLD $1$RESET\n" "${@:1}"
+}
+
+find_deps() {
+  (
+    set -e
+	  pkgname=$1
+    pkgdir="./${pkgname}"
+
+    for dep in $(cat "${pkgdir}/PKGBUILD" | sed -nr 's/^\W*depends=\((.+)\).*$/\1/p' | sed "s/'//g"); do
+      if [ -d "${dep}" ]; then
+        echo "${dep}"
+      fi
+    done
+  )
+}
+
+build_package() {
+	pkgname=$1
+  pkgdir="./${pkgname}"
+
+  if [ ! -d "${pkgdir}" ]; then
+    msg3 "Package ${pkgname} not found"
+    return
+  fi
+  if [ ! -f "${pkgdir}/PKGBUILD" ]; then
+    msg3 "Cannot find PKGBUILD in ${pkgdir}"
+    return
+  fi
+
+  if [ $(ls ${pkgdir}/${pkgname}*.pkg.tar.xz 2> /dev/null | wc -l) -gt 0 ]; then
+    msg2 "Package ${pkgname} already built"
+    return
+  fi
+
+
+  find_deps "${pkgname}" | while read dep; do
+    # Build the dep if we haven't already yet:
+    if [ $(ls ${dep}/${dep}*.pkg.tar.xz 2> /dev/null | wc -l) -eq 0 ]; then
+      build_package "${dep}"
+    fi
+  done
+
+  # Build package
+	echo
+  printf "$GREEN[####################]$RESET[$BOLD Building package $RED${pkgname} $RESET]$GREEN[####################]$RESET\n"
+  cd "${pkgdir}"
+  ppa-build
+  cd ..
+}
+
 packages=$(find . -maxdepth 3 -name PKGBUILD | cut -d'/' -f 2)
 
 if [ "${packages}" = "" ]; then
@@ -25,21 +93,7 @@ if [ "${packages}" = "" ]; then
 fi
 
 for pkgname in ${packages}; do
-	pkgdir="./${pkgname}"
-
-  if [ ! -d "${pkgdir}" ]; then
-    echo "Package ${pkgname} not found"
-    continue
-  fi
-  if [ ! -f "${pkgdir}/PKGBUILD" ]; then
-    echo "Cannot find PKGBUILD in ${pkgdir}"
-    continue
-  fi
-
-  # Build package
-	cd "${pkgdir}"
-	ppa-build
-	cd ..
+	build_package "${pkgname}"
 done
 
 # vim:set ts=2 sw=2 ft=sh noet ai:
