@@ -80,9 +80,9 @@ build_package() {
   # Build package
 	echo
   printf "$GREEN[####################]$RESET[$BOLD Building package $RED${pkgname} $RESET]$GREEN[####################]$RESET\n"
-  cd "${pkgdir}"
+	pushd "${pkgdir}" >/dev/null
   ppa-build
-  cd ..
+	popd >/dev/null
 }
 
 packages=$(find . -maxdepth 3 -name PKGBUILD | cut -d'/' -f 2)

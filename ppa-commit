@@ -87,17 +87,19 @@ add_pkg() {
 	(( $# > 1 )) || return
 	local repo="$1"
 	shift
+  declare -a to_repo
 	msg "Adding packages into $repo"
 	# copy files
 	for _pkg; do
 		msg2 "Copying $_pkg"
-		cp_acl "$_pkg" "$repo/$_pkg" || exit 2
-		cp_acl "$_pkg.sig" "$repo/$_pkg.sig" || exit 2
+		cp_acl "$_pkg" "$repo/$(basename $_pkg)" || exit 2
+		cp_acl "$_pkg.sig" "$repo/$(basename $_pkg).sig" || exit 2
+		to_repo+=("$(basename $_pkg)")
 	done
 	# update db
 	pushd "$repo" >/dev/null
 	msg2 "Updating $dbname.db.tar.gz"
-	repo-add -q -s "$dbname.db.tar.gz" "$@"
+	repo-add -q -s "$dbname.db.tar.gz" "${to_repo[@]}"
 	popd >/dev/null
 }
 
@@ -132,10 +134,12 @@ add_pkg "$repo_32" "${to_32[@]}"
 # add x86_64 packages
 add_pkg "$repo_64" "${to_64[@]}"
 
-# delete packages
-for _pkg in "${to_32[@]}" "${to_64[@]}"; do
-	rm -f "$_pkg" "$_pkg.sig"
-done
+if [[ $remove -eq 1 ]]; then
+	# delete packages
+	for _pkg in "${to_32[@]}" "${to_64[@]}"; do
+		rm -f "$_pkg" "$_pkg.sig"
+	done
+fi
 
 # harlinking
 if type -P hardlink >/dev/null; then
