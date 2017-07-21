@@ -1,5 +1,5 @@
 pkgname=archrepo-git
-pkgver=4.c243fb0
+pkgver=5.b720fa0
 pkgrel=1
 pkgdesc='Archlinux Personal Repository Tools'
 arch=('any')
@@ -23,7 +23,7 @@ package() {
   install -m644 pacman-multilib-ppa.conf "$pkgdir/usr/share/devtools"
   # install binaries
   install -m755 ppa-build ppa-build-all ppa-build-commit ppa-mirrors ppa-commit \
-    ppa-remove ppa-cleanup ppa-list ppa-push rebuild-arch-chroot update-arch-chroots \
+    ppa-remove ppa-cleanup ppa-list ppa-push rebuild-arch-chroots update-arch-chroots \
     "$pkgdir/usr/bin"
   # symlink archbuild
   ln -s archbuild "$pkgdir/usr/bin/ppa-i686-build"
