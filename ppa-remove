@@ -17,7 +17,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 db='ppa.db.tar.gz'
-repo='/srv/http/pkg.sidaf.net/ppa'
+repo='/srv/http/arch.sidaf.net/ppa'
 
 shopt -s nullglob
 

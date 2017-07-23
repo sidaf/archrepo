@@ -17,7 +17,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
 dbname='ppa'
-repo="/srv/http/pkg.sidaf.net/$dbname"
+repo="/srv/http/arch.sidaf.net/$dbname"
 repo_32="$repo/i686"
 repo_64="$repo/x86_64"
 

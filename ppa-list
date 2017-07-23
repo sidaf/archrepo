@@ -19,7 +19,7 @@
 shopt -s xpg_echo
 
 db='ppa.db.tar.gz'
-repo='/srv/http/pkg.sidaf.net/ppa'
+repo='/srv/http/arch.sidaf.net/ppa'
 
 # source makepkg config
 . /etc/makepkg.conf

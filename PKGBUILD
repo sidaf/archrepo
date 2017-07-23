@@ -1,5 +1,5 @@
 pkgname=archrepo-git
-pkgver=5.b720fa0
+pkgver=6.3d74282
 pkgrel=1
 pkgdesc='Archlinux Personal Repository Tools'
 arch=('any')
