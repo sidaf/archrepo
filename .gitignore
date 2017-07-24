@@ -7,3 +7,4 @@ TODO
 test
 tags
 *.pkg.tar.xz
+*.pkg.tar.xz.sig
